@@ -15,7 +15,7 @@ regenerate_ipynb: $(ipynb_regenerate_targets)
 regenerate_py: $(py_regenerate_targets)
 
 $(py_run_targets): run__%.py :
-	[ -e $*.py.skip ] || $(PYTHON) $*.py
+	[ -e $*.py.skip ] || /usr/bin/time -v $(PYTHON) $*.py
 
 $(py_check_targets): check__%.py :
 	grep -q $*.py .travis.yml
