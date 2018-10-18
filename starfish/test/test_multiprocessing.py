@@ -4,8 +4,7 @@ processes.  The data is shared such that any process can write to the array and 
 the other processes.  It is up to the developer that uses this mechanism to ensure data integrity is
 maintained.
 """
-
-
+import copy
 import ctypes
 import multiprocessing
 from functools import partial
@@ -16,6 +15,7 @@ from typing import Any, Callable
 
 import numpy as np
 
+from starfish.imagestack.mp_dataarray import MPDataArray
 from starfish.multiprocessing import shmem
 
 
@@ -80,6 +80,20 @@ def test_wrapped_shmem_numpy_array(nitems: int=10):
 def _decode_wrapped_array_to_numpy_array(wrapped_array):
     return np.frombuffer(wrapped_array.array.get_obj(), dtype=np.uint8)
 
+
+def test_mp_dataarray_deepcopy(nitems: int=10) -> None:
+    """
+    Instantiate a :py:class:`MP_DataArray` and deepcopy it.  Worker processes reconstitute a numpy
+    array from the buffer and attempts to writes to the numpy array.  Writes in the worker process
+    should be visible in the parent process.
+    """
+    array = MPDataArray.from_shape_and_dtype((nitems,), np.uint8)
+    clone = copy.deepcopy(array)
+    _start_process_to_test_shmem(
+        clone.backing_mp_array, _decode_array_to_numpy_array, nitems)
+    for ix in range(nitems):
+        assert array[ix] == 0
+        assert clone[ix] == ix
 
 def _applied_func(decoder: Callable[[Any], np.ndarray], position: int) -> None:
     array = decoder(shmem.get_payload())
