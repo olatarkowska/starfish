@@ -12,6 +12,7 @@ from starfish.image import (
     Registration,
     Segmentation,
 )
+from starfish.orgjson import OrgJsonCommand
 from starfish.spots import (
     Decoder,
     SpotFinder,
@@ -51,6 +52,8 @@ def build_parser():
 
     validate_group = subparsers.add_parser("validate")
     ValidateCli.add_to_parser(validate_group)
+
+    OrgJsonCommand.add_to_parser(subparsers)
 
     return parser
 
