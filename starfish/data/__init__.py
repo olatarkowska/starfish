@@ -33,3 +33,10 @@ def ISS(use_test_data: bool=False):
 def osmFISH(use_test_data: bool=False):
     return Experiment.from_json(
         'https://d2nhj9g34unfro.cloudfront.net/20181005/osmFISH/experiment.json')
+
+
+def ImagingMassCytometry(use_test_data: bool=False):
+    return Experiment.from_json(
+        "https://s3.amazonaws.com/spacetx.starfish.data.public/browse/formatted/20181023/"
+        "imaging_cytof/BodenmillerBreastCancerSamples/experiment.json"
+    )
